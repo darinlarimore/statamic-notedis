@@ -1,0 +1,43 @@
+{
+    "name": "notedis/statamic-notedis",
+    "description": "Integrate the Notedis feedback widget into your Statamic site",
+    "type": "statamic-addon",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Notedis",
+            "email": "support@notedis.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1|^8.2|^8.3",
+        "statamic/cms": "^4.0|^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Notedis\\StatamicNotedis\\": "src/"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Notedis Widget",
+            "description": "Collect feedback, bug reports, and feature requests with Notedis",
+            "handle": "notedis"
+        },
+        "laravel": {
+            "providers": [
+                "Notedis\\StatamicNotedis\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "laravel/pint": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    }
+}

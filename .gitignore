@@ -1,0 +1,27 @@
+# Dependencies
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# Build files
+/resources/js/
+/public/
+
+# Environment
+.env
+.env.backup
+.env.production
+
+# Composer
+composer.lock
+
+# Laravel
+/storage/*.key
