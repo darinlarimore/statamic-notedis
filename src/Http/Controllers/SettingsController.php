@@ -102,20 +102,44 @@ class SettingsController extends CpController
         return config("notedis.{$key}", $default);
     }
 
+    /**
+     * The fallbacks config/notedis.php passes to env(), so a value that differs
+     * from its fallback can only have come from the environment.
+     *
+     * @var array<string, mixed>
+     */
+    protected static array $configDefaults = [
+        'site_key' => '',
+        'api_endpoint' => 'https://notedis.com',
+        'widget_position' => 'bottom-right',
+        'widget_color' => '#3B82F6',
+        'logged_in_only' => false,
+        'show_in_cp' => false,
+        'widget_source' => 'local',
+        'auto_inject' => true,
+    ];
+
     protected static function getEnvValue($key)
     {
-        $envKey = 'NOTEDIS_'.strtoupper($key);
-
-        $value = env($envKey);
-
-        // Return null if not set, so we can fall through to other sources
-        return $value !== null ? $value : null;
+        return self::isConfiguredViaEnv($key)
+            ? config("notedis.{$key}")
+            : null;
     }
 
+    /**
+     * Whether an environment variable is behind this setting.
+     *
+     * Read through config() rather than env(): once the app is config-cached
+     * (`artisan config:cache`, which `artisan optimize` runs) env() returns
+     * null outside config files, which would otherwise hide every environment
+     * variable here and let the YAML file override it.
+     */
     public static function isConfiguredViaEnv($key)
     {
-        $envKey = 'NOTEDIS_'.strtoupper($key);
+        if (! array_key_exists($key, self::$configDefaults)) {
+            return env('NOTEDIS_'.strtoupper($key)) !== null;
+        }
 
-        return env($envKey) !== null;
+        return config("notedis.{$key}") !== self::$configDefaults[$key];
     }
 }

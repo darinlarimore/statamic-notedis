@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-22
+
+### Fixed
+- Environment variables were ignored on config-cached installs. `env()` returns
+  null outside config files once `artisan config:cache` has run (as
+  `artisan optimize` does on most deploys), so every `NOTEDIS_*` variable looked
+  unset: the settings page showed no ENV badges and left the fields editable,
+  and saving the form wrote a YAML file that then outranked the environment.
+  Both checks now read through `config()`, comparing against the fallbacks in
+  `config/notedis.php`.
+
 ## [1.3.0] - 2026-09-22
 
 ### Changed
@@ -104,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling
 - Real-time settings updates without cache clearing
 
-[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.3.0...HEAD
+[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.3.1...HEAD
+[1.3.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.3.1
 [1.3.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.3.0
 [1.2.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.2.1
 [1.2.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.2.0
