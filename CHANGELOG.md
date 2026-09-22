@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-22
+
+### Fixed
+- Saving settings in the Control Panel no longer replaces the page with the raw
+  JSON response. The Control Panel renders addon views inside the Vue app's
+  mount point and boots from deferred scripts, so the old `DOMContentLoaded`
+  handler never bound to the form and it fell back to a native POST. The script
+  now renders in the `scripts` section, outside that element.
+- Use `Statamic.$toast` for save notifications; `window.$toast` is not defined,
+  so every save fell through to `alert()`.
+- Surface a failed save instead of reporting success on a non-2xx response.
+
 ## [1.1.0] - 2026-09-22
 
 ### Changed
@@ -49,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling
 - Real-time settings updates without cache clearing
 
-[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.1.1...HEAD
+[1.1.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.1
 [1.1.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.0
 [1.0.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/v1.0.0

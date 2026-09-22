@@ -289,31 +289,48 @@
     </form>
 </div>
 
+@endsection
+
+@section('scripts')
 <script>
-// Sync color picker and text input
-document.addEventListener('DOMContentLoaded', function() {
-    const colorPicker = document.getElementById('widget_color_picker');
-    const colorText = document.getElementById('widget_color_text');
+// The Control Panel renders this view inside the Vue app's mount point and
+// boots with deferred scripts, so Vue replaces this subtree before
+// DOMContentLoaded fires. This section renders outside that element, so the
+// markup is still around to bind to.
+(function () {
+    const boot = function () {
+        const colorPicker = document.getElementById('widget_color_picker');
+        const colorText = document.getElementById('widget_color_text');
 
-    if (colorPicker && colorText) {
-        colorPicker.addEventListener('change', function() {
-            colorText.value = this.value;
-        });
+        if (colorPicker && colorText) {
+            colorPicker.addEventListener('change', function () {
+                colorText.value = this.value;
+            });
 
-        colorText.addEventListener('change', function() {
-            if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
-                colorPicker.value = this.value;
+            colorText.addEventListener('change', function () {
+                if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+                    colorPicker.value = this.value;
+                }
+            });
+        }
+
+        const form = document.getElementById('notedis-settings-form');
+
+        if (! form) {
+            return false;
+        }
+
+        const notify = function (type, message) {
+            if (window.Statamic && window.Statamic.$toast) {
+                window.Statamic.$toast[type](message);
+            } else {
+                alert(message);
             }
-        });
-    }
+        };
 
-    // Handle form submission via AJAX
-    const form = document.getElementById('notedis-settings-form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const formData = new FormData(this);
             const submitButton = this.querySelector('button[type="submit"]');
             const originalText = submitButton.textContent;
 
@@ -322,36 +339,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
             fetch(this.action, {
                 method: 'POST',
-                body: formData,
+                body: new FormData(this),
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
                 },
             })
-            .then(response => response.json())
-            .then(data => {
-                // Show success message
-                if (window.$toast) {
-                    window.$toast.success(data.message || 'Settings saved successfully');
-                } else {
-                    alert(data.message || 'Settings saved successfully');
-                }
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                if (window.$toast) {
-                    window.$toast.error('Failed to save settings');
-                } else {
-                    alert('Failed to save settings');
-                }
-                submitButton.disabled = false;
-                submitButton.textContent = originalText;
-            });
-        });
-    }
-});
-</script>
+                .then(function (response) {
+                    return response.json().then(function (data) {
+                        if (! response.ok) {
+                            throw new Error(data.message || 'Failed to save settings');
+                        }
 
+                        return data;
+                    });
+                })
+                .then(function (data) {
+                    notify('success', data.message || 'Settings saved successfully');
+                })
+                .catch(function (error) {
+                    console.error('Notedis:', error);
+                    notify('error', error.message || 'Failed to save settings');
+                })
+                .finally(function () {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
+                });
+        });
+
+        return true;
+    };
+
+    // Deferred CP scripts mount Vue after this inline script runs, so the form
+    // may not exist yet. Retry on the events that follow until it does.
+    if (! boot()) {
+        document.addEventListener('DOMContentLoaded', boot, { once: true });
+        window.addEventListener('load', boot, { once: true });
+    }
+})();
+</script>
 @endsection
