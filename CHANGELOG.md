@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-22
+
+### Changed
+- Added support for Statamic 6.x
+- Added support for PHP 8.4
+
+### Fixed
+- Republish the widget script on `statamic:install` so deploys that gitignore
+  `public/vendor` still serve `widget.js`
+
 ## [1.0.0] - 2025-01-23
 
 ### Added
@@ -39,5 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling
 - Real-time settings updates without cache clearing
 
-[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.0
 [1.0.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/v1.0.0

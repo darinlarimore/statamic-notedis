@@ -6,6 +6,7 @@ use Notedis\StatamicNotedis\Http\Middleware\InjectNotedisWidget;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\Permission;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -43,6 +44,15 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../resources/dist' => public_path('vendor/notedis'),
         ], 'notedis-assets');
+
+        // The widget script is served from public/vendor/notedis, which is
+        // typically gitignored, so republish it whenever Statamic installs.
+        Statamic::afterInstalled(function ($command) {
+            $command->call('vendor:publish', [
+                '--tag' => 'notedis-assets',
+                '--force' => true,
+            ]);
+        });
 
         $this->mergeConfigFrom(
             __DIR__.'/../config/notedis.php', 'notedis'

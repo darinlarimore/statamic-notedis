@@ -26,12 +26,12 @@ Add a floating feedback button to your Statamic site that lets visitors submit f
 - **Settings Persistence** - Settings stored in `resources/notedis.yaml` (version controlled)
 - **Permission System** - Role-based access control for configuration
 - **Secure Implementation** - Proper authentication and input validation
-- **Compatible** - Statamic 4.x & 5.x, PHP 8.1+
+- **Compatible** - Statamic 4.x, 5.x & 6.x, PHP 8.1+
 
 ## Requirements
 
-- **Statamic**: 4.x or 5.x
-- **PHP**: 8.1, 8.2, or 8.3
+- **Statamic**: 4.x, 5.x, or 6.x
+- **PHP**: 8.1, 8.2, 8.3, or 8.4
 - **Composer**: For package management
 - **Notedis Account**: Get your site key from [Notedis.com](https://notedis.com)
 
