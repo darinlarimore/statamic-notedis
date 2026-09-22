@@ -354,7 +354,9 @@ Format code with Laravel Pint:
 
 ### Permissions
 
-The addon registers a `configure notedis` permission. Assign this to roles that should manage Notedis settings in the Control Panel.
+The addon registers a `manage notedis` permission. Assign this to roles that should manage Notedis settings in the Control Panel.
+
+It is deliberately not named `configure notedis`: Control Panel lockdown addons such as `trendyminds/nerf` deny every `configure *` permission, which would make the settings page unreachable.
 
 ## Support
 

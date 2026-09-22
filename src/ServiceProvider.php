@@ -77,12 +77,16 @@ class ServiceProvider extends AddonServiceProvider
                 ->section('Tools')
                 ->icon('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>')
                 ->route('notedis.settings.index')
-                ->can('configure notedis');
+                ->can('manage notedis');
         });
     }
 
     protected function registerPermissions()
     {
+        // Named "manage" rather than "configure" so CP lockdown addons that
+        // blanket-deny "configure *" (trendyminds/nerf, for one) don't make
+        // the settings page unreachable.
+        //
         // Registered through extend() rather than register(): Statamic boots
         // permissions from the CP middleware, and if that runs before this
         // addon boots, a bare register() lands after boot() has already
@@ -90,7 +94,7 @@ class ServiceProvider extends AddonServiceProvider
         // it to everyone -- super users included, because Gate::after only
         // grants abilities it recognises as Statamic permissions.
         Permission::extend(function ($permissions) {
-            $permissions->register('configure notedis', function ($permission) {
+            $permissions->register('manage notedis', function ($permission) {
                 $permission
                     ->label('Configure Notedis')
                     ->description('Allows configuring Notedis settings');
