@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-22
+
+### Fixed
+- The widget now works on statically cached sites. Injection happened in
+  middleware that wraps Statamic's static cache, so a cached page was replayed
+  without it ever running and the button never appeared. Injection moved to the
+  `ResponseCreated` event, which fires before the page is cached, and on a
+  statically cached route the widget is registered as a `nocache` region so the
+  site key lookup and the logged-in check run on every request rather than
+  being frozen into the cache.
+
 ## [1.1.2] - 2026-09-22
 
 ### Fixed
@@ -71,7 +82,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling
 - Real-time settings updates without cache clearing
 
-[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.1.2...HEAD
+[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.2.0
 [1.1.2]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.2
 [1.1.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.1
 [1.1.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.0

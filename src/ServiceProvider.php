@@ -3,6 +3,8 @@
 namespace Notedis\StatamicNotedis;
 
 use Notedis\StatamicNotedis\Http\Middleware\InjectNotedisWidget;
+use Notedis\StatamicNotedis\Listeners\InjectWidgetIntoResponse;
+use Statamic\Events\ResponseCreated;
 use Statamic\Facades\CP\Nav;
 use Statamic\Facades\Permission;
 use Statamic\Providers\AddonServiceProvider;
@@ -23,11 +25,14 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $middlewareGroups = [
-        'web' => [
-            InjectNotedisWidget::class,
-        ],
         'statamic.cp.authenticated' => [
             InjectNotedisWidget::class,
+        ],
+    ];
+
+    protected $listen = [
+        ResponseCreated::class => [
+            InjectWidgetIntoResponse::class,
         ],
     ];
 

@@ -27,6 +27,7 @@ Add a floating feedback button to your Statamic site that lets visitors submit f
 - **Permission System** - Role-based access control for configuration
 - **Secure Implementation** - Proper authentication and input validation
 - **Compatible** - Statamic 4.x, 5.x & 6.x, PHP 8.1+
+- **Static caching aware** - works with Statamic's half and full static caching
 
 ## Requirements
 
