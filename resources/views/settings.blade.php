@@ -293,89 +293,92 @@
 
 @section('scripts')
 <script>
-// The Control Panel renders this view inside the Vue app's mount point and
-// boots with deferred scripts, so Vue replaces this subtree before
-// DOMContentLoaded fires. This section renders outside that element, so the
-// markup is still around to bind to.
+// The Control Panel reads this view's markup out of the Vue mount point and
+// recompiles it as a template, so the form on screen is a fresh element and
+// anything bound to the original is thrown away. Delegating from document
+// survives that, and every re-render after it.
 (function () {
-    const boot = function () {
-        const colorPicker = document.getElementById('widget_color_picker');
-        const colorText = document.getElementById('widget_color_text');
+    const FORM_ID = 'notedis-settings-form';
 
-        if (colorPicker && colorText) {
-            colorPicker.addEventListener('change', function () {
-                colorText.value = this.value;
-            });
-
-            colorText.addEventListener('change', function () {
-                if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
-                    colorPicker.value = this.value;
-                }
-            });
+    const notify = function (type, message) {
+        if (window.Statamic && window.Statamic.$toast) {
+            window.Statamic.$toast[type](message);
+        } else {
+            alert(message);
         }
-
-        const form = document.getElementById('notedis-settings-form');
-
-        if (! form) {
-            return false;
-        }
-
-        const notify = function (type, message) {
-            if (window.Statamic && window.Statamic.$toast) {
-                window.Statamic.$toast[type](message);
-            } else {
-                alert(message);
-            }
-        };
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-
-            submitButton.disabled = true;
-            submitButton.textContent = 'Saving...';
-
-            fetch(this.action, {
-                method: 'POST',
-                body: new FormData(this),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                },
-            })
-                .then(function (response) {
-                    return response.json().then(function (data) {
-                        if (! response.ok) {
-                            throw new Error(data.message || 'Failed to save settings');
-                        }
-
-                        return data;
-                    });
-                })
-                .then(function (data) {
-                    notify('success', data.message || 'Settings saved successfully');
-                })
-                .catch(function (error) {
-                    console.error('Notedis:', error);
-                    notify('error', error.message || 'Failed to save settings');
-                })
-                .finally(function () {
-                    submitButton.disabled = false;
-                    submitButton.textContent = originalText;
-                });
-        });
-
-        return true;
     };
 
-    // Deferred CP scripts mount Vue after this inline script runs, so the form
-    // may not exist yet. Retry on the events that follow until it does.
-    if (! boot()) {
-        document.addEventListener('DOMContentLoaded', boot, { once: true });
-        window.addEventListener('load', boot, { once: true });
-    }
+    document.addEventListener('input', function (e) {
+        const field = e.target;
+
+        if (! field.closest || ! field.closest('#' + FORM_ID)) {
+            return;
+        }
+
+        if (field.id === 'widget_color_picker') {
+            const text = document.getElementById('widget_color_text');
+            if (text) {
+                text.value = field.value;
+            }
+        }
+
+        if (field.id === 'widget_color_text' && /^#[0-9A-Fa-f]{6}$/.test(field.value)) {
+            const picker = document.getElementById('widget_color_picker');
+            if (picker) {
+                picker.value = field.value;
+            }
+        }
+    });
+
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+
+        if (! form || form.id !== FORM_ID) {
+            return;
+        }
+
+        e.preventDefault();
+
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton ? submitButton.textContent : null;
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
+        }
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            credentials: 'same-origin',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            },
+        })
+            .then(function (response) {
+                return response.json().then(function (data) {
+                    if (! response.ok) {
+                        throw new Error(data.message || 'Failed to save settings');
+                    }
+
+                    return data;
+                });
+            })
+            .then(function (data) {
+                notify('success', data.message || 'Settings saved successfully');
+            })
+            .catch(function (error) {
+                console.error('Notedis:', error);
+                notify('error', error.message || 'Failed to save settings');
+            })
+            .finally(function () {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
+                }
+            });
+    });
 })();
 </script>
 @endsection

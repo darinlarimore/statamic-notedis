@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-09-22
+
+### Fixed
+- Saving settings in the Control Panel still rendered the raw JSON response.
+  The Control Panel reads the view's markup out of the Vue mount point and
+  recompiles it as a template, so the form on screen is a new element and the
+  listener bound in 1.1.1 was attached to a discarded one. The submit and
+  colour-field handlers are now delegated from `document`, which survives that
+  re-render.
+
 ## [1.1.1] - 2026-09-22
 
 ### Fixed
@@ -61,7 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling
 - Real-time settings updates without cache clearing
 
-[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.1.1...HEAD
+[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.1.2...HEAD
+[1.1.2]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.2
 [1.1.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.1
 [1.1.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.0
 [1.0.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/v1.0.0
