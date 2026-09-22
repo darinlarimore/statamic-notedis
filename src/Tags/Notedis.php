@@ -63,6 +63,37 @@ HTML;
     }
 
     /**
+     * The `{{ notedis:config }}` tag - the per-visitor decision only.
+     *
+     * Rendered inside a `{{ nocache }}` region so the logged-in check runs on
+     * every request. It deliberately emits no `<script src>`: Statamic swaps
+     * nocache regions in with `setHTMLUnsafe()`, and the HTML spec marks
+     * scripts parsed from a string as already-executed, so a loader placed
+     * here would sit in the DOM and never run.
+     */
+    public function config()
+    {
+        $siteKey = $this->params->get('site_key', SettingsController::getSettingValue('site_key'));
+
+        if (empty($siteKey)) {
+            return '';
+        }
+
+        if (SettingsController::getSettingValue('logged_in_only', false) && ! auth()->check()) {
+            return '';
+        }
+
+        $config = json_encode([
+            'siteKey' => $siteKey,
+            'apiUrl' => $this->params->get('api_url', SettingsController::getSettingValue('api_endpoint', 'https://notedis.com')),
+            'position' => $this->params->get('position', SettingsController::getSettingValue('widget_position', 'bottom-right')),
+            'color' => $this->params->get('color', SettingsController::getSettingValue('widget_color', '#3B82F6')),
+        ]);
+
+        return '<span data-notedis-config=\''.htmlspecialchars($config, ENT_QUOTES).'\'></span>';
+    }
+
+    /**
      * The {{ notedis:button }} tag - renders just the config without script.
      * Useful if you want to load the script separately.
      *

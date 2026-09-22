@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-22
+
+### Fixed
+- The widget never appeared on statically cached sites. Statamic swaps nocache
+  regions into the page with `setHTMLUnsafe()`, and the HTML spec marks scripts
+  parsed from a string as already-executed, so the `<script src>` the region
+  carried sat in the DOM and never ran -- `window.notedisWidget` stayed
+  undefined and no button was created. The loader is now written into the page
+  itself, where it executes normally, and only the per-visitor config travels
+  through the nocache region, so the logged-in check still runs per request.
+
+### Added
+- A `{{ notedis:config }}` tag that emits the widget settings as data without a
+  script tag, for placing inside a `{{ nocache }}` region.
+
 ## [1.3.1] - 2026-09-22
 
 ### Fixed
@@ -115,7 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling
 - Real-time settings updates without cache clearing
 
-[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.3.1...HEAD
+[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.4.0
 [1.3.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.3.1
 [1.3.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.3.0
 [1.2.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.2.1
