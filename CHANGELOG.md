@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-09-22
+
+### Fixed
+- The Control Panel settings page could redirect to the dashboard instead of
+  opening, even for super users. The `configure notedis` permission was added
+  with `Permission::register()` from `bootAddon()`, so if Statamic booted its
+  permissions before this addon booted, the registration landed after boot had
+  finished and the gate never learned the ability -- and `Gate::after` only
+  grants super users abilities it recognises as Statamic permissions. It is now
+  registered through `Permission::extend()`, which is replayed on boot
+  regardless of ordering.
+
 ## [1.2.0] - 2026-09-22
 
 ### Fixed
@@ -82,7 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive error handling
 - Real-time settings updates without cache clearing
 
-[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/darinlarimore/statamic-notedis/compare/1.2.1...HEAD
+[1.2.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.2.1
 [1.2.0]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.2.0
 [1.1.2]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.2
 [1.1.1]: https://github.com/darinlarimore/statamic-notedis/releases/tag/1.1.1

@@ -83,10 +83,18 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function registerPermissions()
     {
-        Permission::register('configure notedis', function ($permission) {
-            $permission
-                ->label('Configure Notedis')
-                ->description('Allows configuring Notedis settings');
+        // Registered through extend() rather than register(): Statamic boots
+        // permissions from the CP middleware, and if that runs before this
+        // addon boots, a bare register() lands after boot() has already
+        // finished. The permission is then unknown to the gate, which denies
+        // it to everyone -- super users included, because Gate::after only
+        // grants abilities it recognises as Statamic permissions.
+        Permission::extend(function ($permissions) {
+            $permissions->register('configure notedis', function ($permission) {
+                $permission
+                    ->label('Configure Notedis')
+                    ->description('Allows configuring Notedis settings');
+            });
         });
     }
 }
